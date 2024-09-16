@@ -13,6 +13,7 @@ anyio = "^4.4.0"
 hypercorn = "^0.17.3"
 
 cryptg = "^0.4.0"
+quart-cors = "^0.7.0"
 [tool.poetry.group.dev.dependencies]
 flake8 = "^7.1.0"
 flake8-bugbear = "^24.4.26"

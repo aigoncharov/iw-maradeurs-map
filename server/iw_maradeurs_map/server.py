@@ -1,9 +1,11 @@
 from quart import Quart, request
+from quart_cors import cors
 import logging
 
 logging.basicConfig(level="DEBUG")
 
 app = Quart(__name__)
+app = cors(app, allow_origin="*")
 
 users = {"42": {"id": "42", "position": None}}
 sensors = [
