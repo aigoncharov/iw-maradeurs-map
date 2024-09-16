@@ -1,0 +1,11 @@
+services:
+  iw_maradeurs_map:
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile
+      tags:
+        - "iw_maradeurs_map:dev"
+    container_name: iw_maradeurs_map
+    restart: always
+    ports:
+      - 3042:3042

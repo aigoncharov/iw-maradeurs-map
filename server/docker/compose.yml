@@ -1,0 +1,7 @@
+services:
+  iw_maradeurs_map:
+    image: aigoncharov/iw_maradeurs_map:latest
+    container_name: iw_maradeurs_map
+    restart: always
+    ports:
+      - 3042:3042
