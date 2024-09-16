@@ -9,9 +9,9 @@ app = cors(app, allow_origin="*")
 
 users = {"42": {"id": "42", "position": None}}
 sensors = [
-    {"id": "tbd1", "position": {"x": 0, "y": 0}},
-    {"id": "tbd2", "position": {"x": 0, "y": 0}},
-    {"id": "tbd3", "position": {"x": 0, "y": 0}},
+    {"id": "tbd1", "position": {"x": 37.35950, "y": 55.69854}},
+    {"id": "tbd2", "position": {"x": 37.35962, "y": 55.69854}},
+    {"id": "tbd3", "position": {"x": 37.35958, "y": 55.69844}},
 ]
 
 
