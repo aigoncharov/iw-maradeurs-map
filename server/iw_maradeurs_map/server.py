@@ -7,7 +7,7 @@ logging.basicConfig(level="DEBUG")
 app = Quart(__name__)
 app = cors(app, allow_origin="*")
 
-users = {"42": {"id": "42", "position": None}}
+users = {"42": {"id": "42", "position": {"x": 37.35960, "y": 55.69850}}}
 sensors = [
     {"id": "tbd1", "position": {"x": 37.35950, "y": 55.69854}},
     {"id": "tbd2", "position": {"x": 37.35962, "y": 55.69854}},
