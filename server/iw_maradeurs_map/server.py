@@ -35,13 +35,13 @@ async def startup():
     cnt = 0
     while running:
         if cnt % 4 == 0:
-            users["42"]["position"]["x"] += 0.00001
+            users["42"]["position"]["x"] += 0.00003
         elif cnt % 4 == 1:
-            users["42"]["position"]["y"] += 0.00001
+            users["42"]["position"]["y"] += 0.00003
         elif cnt % 4 == 2:
-            users["42"]["position"]["x"] -= 0.00001
+            users["42"]["position"]["x"] -= 0.00003
         elif cnt % 4 == 3:
-            users["42"]["position"]["y"] -= 0.00001
+            users["42"]["position"]["y"] -= 0.00003
         await asyncio.sleep(2)
 
 
