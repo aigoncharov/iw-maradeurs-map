@@ -27,9 +27,8 @@ sensors = [
 @app.route("/users")
 async def users_get():
     logging.debug("GET /users")
-    users_list = [user for user in users]
-    user_positions = [users[user] for user in users]
-    return {"users": users_list, "positions": user_positions}
+    users_list = [user for _, user in users]
+    return {"users": users_list}
 
 
 @app.route("/map")
