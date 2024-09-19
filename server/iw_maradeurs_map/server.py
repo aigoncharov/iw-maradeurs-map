@@ -26,15 +26,16 @@ sensors = [
 ]
 
 running_task = None
+cnt = 0
 
 
 @app.before_serving
 async def startup():
     global running_task
-    cnt = 0
 
     async def schedule():
         global running_task
+        global cnt
 
         if cnt % 4 == 0:
             users["42"]["position"]["x"] += 0.00003
@@ -44,6 +45,7 @@ async def startup():
             users["42"]["position"]["x"] -= 0.00003
         elif cnt % 4 == 3:
             users["42"]["position"]["y"] -= 0.00003
+        cnt += 1
         await asyncio.sleep(2)
 
         loop = asyncio.get_event_loop()
