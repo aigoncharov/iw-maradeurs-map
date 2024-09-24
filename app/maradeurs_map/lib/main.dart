@@ -5,16 +5,16 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'dart:math';
-// import 'package:flutter_blue/flutter_blue.dart';
+// import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'dart:developer';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 import 'package:flutter/material.dart';
-// import 'package:flutter_blue/flutter_blue.dart';
 
 void main() {
   runApp(MyApp());
+  BluetoothService().startScan();
 }
 
 class MyApp extends StatelessWidget {
@@ -190,5 +190,33 @@ class _RedDotAnimationState extends State<RedDotAnimation>
         ),
       ),
     );
+  }
+}
+
+class BluetoothService {
+  List<BluetoothDevice> devicesList = [];
+
+  void startScan() {
+    FlutterBluePlus.startScan(timeout: Duration(seconds: 1));
+
+    FlutterBluePlus.scanResults.listen((results) {
+      for (ScanResult r in results) {
+        if (!devicesList.contains(r.device)) {
+          devicesList.add(r.device);
+          connectToDevice(r.device);
+        }
+      }
+    });
+
+    // Restart scan after a delay to continuously scan
+    Future.delayed(Duration(seconds: 5), () {
+      FlutterBluePlus.stopScan();
+      startScan();
+    });
+  }
+
+  void connectToDevice(BluetoothDevice device) async {
+    await device.connect();
+    // Add more logic here to interact with the connected device
   }
 }
