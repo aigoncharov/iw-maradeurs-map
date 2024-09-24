@@ -12,15 +12,15 @@ users = {"42": {"id": "42", "position": {"x": 37.35960, "y": 55.69850}}}
 
 sensors = [
     {
-        "id": "b6b734c1-1dc5-4d7f-b8da-3def1ee6b530",
+        "id": "MARADEUR1",
         "position": {"x": 37.35950, "y": 55.69854},
     },
     {
-        "id": "d24635bf-5843-4086-aaeb-a60c1be948eb",
+        "id": "MARADEUR2",
         "position": {"x": 37.35962, "y": 55.69854},
     },
     {
-        "id": "85374a27-6206-4711-bf17-f1066ee3dd7e",
+        "id": "MARADEUR3",
         "position": {"x": 37.35958, "y": 55.69844},
     },
 ]
