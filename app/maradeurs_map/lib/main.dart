@@ -13,7 +13,9 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter/material.dart';
 
 void main() {
+  FlutterBluePlus.setLogLevel(LogLevel.verbose, color:false);
   runApp(MyApp());
+  FlutterBluePlus.turnOn();
   BluetoothService().startScan();
 }
 
@@ -194,29 +196,45 @@ class _RedDotAnimationState extends State<RedDotAnimation>
 }
 
 class BluetoothService {
-  List<BluetoothDevice> devicesList = [];
+  // List<BluetoothDevice> devicesList = [];
 
-  void startScan() {
-    FlutterBluePlus.startScan(timeout: Duration(seconds: 1));
+  void startScan() async {
+    var subscription = FlutterBluePlus.onScanResults.listen((results) {
+      print('scanning subscription call');
+        if (results.isNotEmpty) {
+            ScanResult r = results.last; // the most recently found device
+            print('${r.device.remoteId}: "${r.advertisementData.advName}" found!');
+          }
+        },
+        onError: (e) => print(e),
+    );
 
-    FlutterBluePlus.scanResults.listen((results) {
-      for (ScanResult r in results) {
-        if (!devicesList.contains(r.device)) {
-          devicesList.add(r.device);
-          connectToDevice(r.device);
-        }
-      }
-    });
+    // cleanup: cancel subscription when scanning stops
+    FlutterBluePlus.cancelWhenScanComplete(subscription);
+
+    // Wait for Bluetooth enabled & permission granted
+    // In your real app you should use `FlutterBluePlus.adapterState.listen` to handle all states
+    await FlutterBluePlus.adapterState.where((val) => val == BluetoothAdapterState.on).first;
+
+    // Start scanning w/ timeout
+    // Optional: use `stopScan()` as an alternative to timeout
+    FlutterBluePlus.startScan(
+      // withNames:["MARADEUR"], // *or* any of the specified names
+  );
+
+    // FlutterBluePlus.startScan(timeout: Duration(seconds: 1));
+
+    // FlutterBluePlus.scanResults.listen((results) {
+    //   for (ScanResult r in results) {
+    //     String prettyJson = JsonEncoder.withIndent('  ').convert(r.device);
+    //     print('BLE scan result ${prettyJson}');
+    //   }
+    // });
 
     // Restart scan after a delay to continuously scan
-    Future.delayed(Duration(seconds: 5), () {
-      FlutterBluePlus.stopScan();
-      startScan();
-    });
-  }
-
-  void connectToDevice(BluetoothDevice device) async {
-    await device.connect();
-    // Add more logic here to interact with the connected device
+    // Future.delayed(Duration(seconds: 5), () {
+    //   FlutterBluePlus.stopScan();
+    //   startScan();
+    // });
   }
 }
