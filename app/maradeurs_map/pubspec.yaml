@@ -31,7 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^0.13.3
-  flutter_blue: ^0.8.0
+  flutter_blue_plus: ^1.32.12
   flutter_svg: ^2.0.5
 
 
