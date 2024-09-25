@@ -114,9 +114,9 @@ def get_distance(signal):
 def triangulate(signals):
     if len(signals) < 2:
         return 0, 0
-    # assert len(signals) >= 2, "Should be at least 2 signals"
 
     signals.sort(key = lambda x : -x['signal'])
+    return signals[0]['x'], signals[0]['y']
     
     x1 = signals[0]['x']
     y1 = signals[0]['y']
