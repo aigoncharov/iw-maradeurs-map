@@ -198,10 +198,10 @@ class _RedDotAnimationState extends State<RedDotAnimation>
 }
 
 class BluetoothRssiReader {
-  BluetoothDevice device;
+  List<BluetoothDevice> devices = [];
   Timer? _timer;
 
-  BluetoothRssiReader(this.device);
+  BluetoothRssiReader(this.devices);
 
   void startReadingRssi() {
     // Cancel any existing timer
@@ -219,20 +219,22 @@ class BluetoothRssiReader {
   }
 
   Future<void> _readRssi() async {
-    print('_readRssi: "${device.advName}"');
-    try {
-      // Check if the device is connected
-      if (device.state != BluetoothDeviceState.connected) {
-        print('Device is not connected. Attempting to connect...');
-        await device.connect();
-      }
+    for (var device in devices) {
+      print('_readRssi: "${device.advName}"');
+      try {
+        // Check if the device is connected
+        if (device.state != BluetoothDeviceState.connected) {
+          print('Device is not connected. Attempting to connect...');
+          await device.connect();
+        }
 
-      // Read RSSI
-      int rssi = await device.readRssi();
-      print('RSSI ${device.advName}: $rssi dBm');
-    } catch (e) {
-      print('Error reading RSSI: $e');
-      // Handle the error (e.g., attempt reconnection, notify user, etc.)
+        // Read RSSI
+        int rssi = await device.readRssi();
+        print('RSSI ${device.advName}: $rssi dBm');
+      } catch (e) {
+        print('Error reading RSSI: $e');
+        // Handle the error (e.g., attempt reconnection, notify user, etc.)
+      }
     }
   }
 }
@@ -244,12 +246,14 @@ class BluetoothService {
     print('startScan');
     var subscription = FlutterBluePlus.onScanResults.listen((results) async {
           print('startScan -> scanning subscription call');
+          List<BluetoothDevice> devices = [];
           for (ScanResult r in results) {
             var device = r.device;
-            print('startScan: "${device.advName}" found. Starting RSSI reading');
-            var rssiReader = BluetoothRssiReader(device);
-            rssiReader.startReadingRssi();
+            devices.add(device);
+            print('startScan: "${device.advName}" found');
           }
+          var rssiReader = BluetoothRssiReader(devices);
+          rssiReader.startReadingRssi();
         },
         onError: (e) => print(e),
     );
