@@ -1,5 +1,7 @@
 // import 'dart:nativewrappers/_internal/vm/lib/internal_patch.dart';
 
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -196,14 +198,18 @@ class _RedDotAnimationState extends State<RedDotAnimation>
 }
 
 class BluetoothService {
-  // List<BluetoothDevice> devicesList = [];
+  // var devicesList = HashMap<String, BluetoothDevice>();
 
   void startScan() async {
     print('startScan');
-    var subscription = FlutterBluePlus.onScanResults.listen((results) {
+    var subscription = FlutterBluePlus.onScanResults.listen((results) async {
           print('startScan -> scanning subscription call');
           for (ScanResult r in results) {
-            print('startScan: ${r.device.remoteId}: "${r.advertisementData.advName}" found!');
+            var device = r.device;
+            print('startScan: "${device.advName}" found. Getting RSSI');
+            await device.connect();
+            int rssi = await device.readRssi();
+            print('startScan: "${device.advName}" RSSI ${rssi}');
           }
         },
         onError: (e) => print(e),
