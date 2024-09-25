@@ -43,6 +43,7 @@ sensors = {
 
 running_task = None
 cnt = 0
+eps = 0.000000001
 
 
 @app.before_serving
@@ -79,31 +80,34 @@ async def cleanup():
 
 @app.route("/users")
 async def users_get():
-    logging.debug("GET /users")
+    # logging.debug("GET /users")
+    logging.debug("UPDATE POSITION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     users_list = [users[id] for id in users]
     return {"users": users_list}
 
 
-@app.route("/map")
-async def map_get():
-    logging.debug("GET /map")
-    return {"sensors": sensors}
+# @app.route("/map")
+# async def map_get():
+#     logging.debug("GET /map")
+#     return {"sensors": sensors}
 
 
 @app.route("/location", methods=["POST"])
 async def location_post():
-    logging.debug("POST /location")
+    # logging.debug("POST /location")
     data = await request.get_json()
-    logging.debug(f"POST /location -> data {json.dumps(data)}")
+    # logging.debug(f"POST /location -> data {json.dumps(data)}")
     sensors_signal = adjust_data(data["sensors"])
     location_x, location_y = triangulate(sensors_signal)
-    if location_x != 0 and location_y != 0:
+    if not location_x is None and not location_y is None:
+        if abs(location_x - users["42"]["position"]["x"]) > eps or abs(location_y - users["42"]["position"]["y"]) > eps:
+            logging.debug(f"FOUND NEW POSITION x {str(location_x)}")
+            logging.debug(f"FOUND NEW POSITION y {str(location_y)}")
+
         users["42"]["position"] = {
             "x": location_x,
             "y": location_y,
         }
-    logging.debug(f"FOUND NEW POSITION x {str(location_x)}")
-    logging.debug(f"FOUND NEW POSITION y {str(location_y)}")
     return "", 204
 
 def adjust_data(signals):
