@@ -81,7 +81,7 @@ async def cleanup():
 @app.route("/users")
 async def users_get():
     # logging.debug("GET /users")
-    logging.debug("UPDATE POSITION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    # logging.debug("UPDATE POSITION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     users_list = [users[id] for id in users]
     return {"users": users_list}
 
