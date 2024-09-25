@@ -37,15 +37,15 @@ async def startup():
         global running_task
         global cnt
 
-        if cnt % 4 == 0:
-            users["42"]["position"]["x"] += 0.00003
-        elif cnt % 4 == 1:
-            users["42"]["position"]["y"] += 0.00003
-        elif cnt % 4 == 2:
-            users["42"]["position"]["x"] -= 0.00003
-        elif cnt % 4 == 3:
-            users["42"]["position"]["y"] -= 0.00003
-        cnt += 1
+        # if cnt % 4 == 0:
+        #     users["42"]["position"]["x"] += 0.00003
+        # elif cnt % 4 == 1:
+        #     users["42"]["position"]["y"] += 0.00003
+        # elif cnt % 4 == 2:
+        #     users["42"]["position"]["x"] -= 0.00003
+        # elif cnt % 4 == 3:
+        #     users["42"]["position"]["y"] -= 0.00003
+        # cnt += 1
         await asyncio.sleep(2)
 
         loop = asyncio.get_event_loop()
@@ -80,7 +80,7 @@ async def location_post():
     data = await request.get_json()
     sensors_signal = data["sensors"]
     triangulate(sensors_signal)
-    return None, 204
+    return "", 204
 
 
 def triangulate(sensors_signal):
