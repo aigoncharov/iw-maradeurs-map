@@ -4,7 +4,7 @@ import logging
 import asyncio
 import json
 
-logging.basicConfig(level="DEBUG")
+logging.basicConfig(level="WARNING")
 
 app = Quart(__name__)
 app = cors(app, allow_origin="*")
@@ -23,7 +23,7 @@ sensors = {
     "MARADEUR3": {
         "x": 37.35958,
         "y": 55.69844,
-    }
+    },
 }
 
 # sensors = [
@@ -99,10 +99,13 @@ async def location_post():
     # logging.debug(f"POST /location -> data {json.dumps(data)}")
     sensors_signal = adjust_data(data["sensors"])
     location_x, location_y = triangulate(sensors_signal)
-    if not location_x is None and not location_y is None:
-        if abs(location_x - users["42"]["position"]["x"]) > eps or abs(location_y - users["42"]["position"]["y"]) > eps:
-            logging.debug(f"FOUND NEW POSITION x {str(location_x)}")
-            logging.debug(f"FOUND NEW POSITION y {str(location_y)}")
+    if location_x is not None and location_y is not None:
+        if (
+            abs(location_x - users["42"]["position"]["x"]) > eps
+            or abs(location_y - users["42"]["position"]["y"]) > eps
+        ):
+            logging.warning(f"FOUND NEW POSITION x {str(location_x)}")
+            logging.warning(f"FOUND NEW POSITION y {str(location_y)}")
 
         users["42"]["position"] = {
             "x": location_x,
@@ -110,30 +113,33 @@ async def location_post():
         }
     return "", 204
 
+
 def adjust_data(signals):
     for i in range(len(signals)):
-        idx = signals[i]['id']
-        signals[i]['x'] = sensors[idx]['x']
-        signals[i]['y'] = sensors[idx]['y']
+        idx = signals[i]["id"]
+        signals[i]["x"] = sensors[idx]["x"]
+        signals[i]["y"] = sensors[idx]["y"]
     return signals
+
 
 def get_distance(signal):
     return signal + 127 + 100
+
 
 def triangulate(signals):
     if len(signals) < 2:
         return 0, 0
 
-    signals.sort(key = lambda x : -x['signal'])
+    signals.sort(key=lambda x: -x["signal"])
     # return signals[0]['x'], signals[0]['y']
-    
-    x1 = signals[0]['x']
-    y1 = signals[0]['y']
-    dist1 = get_distance(signals[0]['signal'])
 
-    x2 = signals[1]['x']
-    y2 = signals[1]['y']
-    dist2 = get_distance(signals[1]['signal'])
+    x1 = signals[0]["x"]
+    y1 = signals[0]["y"]
+    dist1 = get_distance(signals[0]["signal"])
+
+    x2 = signals[1]["x"]
+    y2 = signals[1]["y"]
+    dist2 = get_distance(signals[1]["signal"])
 
     if len(signals) == 2:
         coef1 = dist2 / (dist1 + dist2)
@@ -144,9 +150,9 @@ def triangulate(signals):
         res_y1 = y1 * coef1 + y2 * coef2
         return res_x1, res_y1
 
-    x3 = signals[2]['x']
-    y3 = signals[2]['y']
-    dist3 = get_distance(signals[2]['signal'])
+    x3 = signals[2]["x"]
+    y3 = signals[2]["y"]
+    dist3 = get_distance(signals[2]["signal"])
 
     coef1 = dist2 / (dist1 + dist2)
     coef2 = dist1 / (dist1 + dist2)
