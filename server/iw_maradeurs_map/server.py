@@ -97,7 +97,8 @@ async def location_post():
     logging.debug(f"POST /location -> data {json.dumps(data)}")
     sensors_signal = adjust_data(data["sensors"])
     location_x, location_y = triangulate(sensors_signal)
-    logging.debug(f"FOUND NEW POSITION {location_x}, {location_y}")
+    logging.debug(f"FOUND NEW POSITION x {str(location_x)}")
+    logging.debug(f"FOUND NEW POSITION y {str(location_y)}")
     return "", 204
 
 def adjust_data(signals):
