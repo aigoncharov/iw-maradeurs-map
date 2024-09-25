@@ -197,6 +197,46 @@ class _RedDotAnimationState extends State<RedDotAnimation>
   }
 }
 
+class BluetoothRssiReader {
+  BluetoothDevice device;
+  Timer? _timer;
+
+  BluetoothRssiReader(this.device);
+
+  void startReadingRssi() {
+    // Cancel any existing timer
+    _timer?.cancel();
+
+    // Create a new timer that fires every 5 seconds
+    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      _readRssi();
+    });
+  }
+
+  void stopReadingRssi() {
+    _timer?.cancel();
+    _timer = null;
+  }
+
+  Future<void> _readRssi() async {
+    print('_readRssi: "${device.advName}"');
+    try {
+      // Check if the device is connected
+      if (device.state != BluetoothDeviceState.connected) {
+        print('Device is not connected. Attempting to connect...');
+        await device.connect();
+      }
+
+      // Read RSSI
+      int rssi = await device.readRssi();
+      print('RSSI ${device.advName}: $rssi dBm');
+    } catch (e) {
+      print('Error reading RSSI: $e');
+      // Handle the error (e.g., attempt reconnection, notify user, etc.)
+    }
+  }
+}
+
 class BluetoothService {
   // var devicesList = HashMap<String, BluetoothDevice>();
 
@@ -206,17 +246,16 @@ class BluetoothService {
           print('startScan -> scanning subscription call');
           for (ScanResult r in results) {
             var device = r.device;
-            print('startScan: "${device.advName}" found. Getting RSSI');
-            await device.connect();
-            int rssi = await device.readRssi();
-            print('startScan: "${device.advName}" RSSI ${rssi}');
+            print('startScan: "${device.advName}" found. Starting RSSI reading');
+            var rssiReader = BluetoothRssiReader(device);
+            rssiReader.startReadingRssi();
           }
         },
         onError: (e) => print(e),
     );
 
     // cleanup: cancel subscription when scanning stops
-    // FlutterBluePlus.cancelWhenScanComplete(subscription);
+    FlutterBluePlus.cancelWhenScanComplete(subscription);
 
     // Wait for Bluetooth enabled & permission granted
     // In your real app you should use `FlutterBluePlus.adapterState.listen` to handle all states
@@ -230,6 +269,7 @@ class BluetoothService {
     FlutterBluePlus.startScan(
         androidUsesFineLocation:true,
       withNames:["MARADEUR1", "MARADEUR2", "MARADEUR3"], // *or* any of the specified names
+        timeout: Duration(seconds: 5)
   );
 
     print('startScan -> scanning...');
