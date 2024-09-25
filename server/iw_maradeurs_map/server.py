@@ -2,6 +2,7 @@ from quart import Quart, request
 from quart_cors import cors
 import logging
 import asyncio
+import json
 
 logging.basicConfig(level="DEBUG")
 
@@ -78,6 +79,7 @@ async def map_get():
 async def location_post():
     logging.debug("POST /location")
     data = await request.get_json()
+    logging.debug(f"POST /location -> data {json.dumps(data)}")
     sensors_signal = data["sensors"]
     triangulate(sensors_signal)
     return "", 204
