@@ -219,6 +219,8 @@ class BluetoothRssiReader {
   }
 
   Future<void> _readRssi() async {
+    List<Map<String, dynamic>> sensors = [];
+
     for (var device in devices) {
       print('_readRssi: "${device.advName}"');
       try {
@@ -231,10 +233,36 @@ class BluetoothRssiReader {
         // Read RSSI
         int rssi = await device.readRssi();
         print('RSSI ${device.advName}: $rssi dBm');
+
+        Map<String, dynamic> data = {
+          'id': device.advName,
+          'signal': rssi
+        };
+
+        sensors.add(data);
       } catch (e) {
         print('Error reading RSSI: $e');
         // Handle the error (e.g., attempt reconnection, notify user, etc.)
       }
+    }
+
+    final response = await http.post(
+      Uri.parse('https://maradeursmap.iw.goncharov.page/location'),
+      headers: {
+        'Content-Type': 'application/json',
+        // Add any additional headers here
+      },
+      body: jsonEncode({'sensors': sensors}),
+    );
+
+    if (response.statusCode == 204) {
+      // If the server returns a 200 OK response, parse the JSON
+      print('Sent signal data to server');
+    } else {
+      // If the server did not return a 200 OK response,
+      // throw an exception.
+      print('Failed to send data. Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
     }
   }
 }
