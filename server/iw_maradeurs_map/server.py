@@ -96,7 +96,7 @@ async def users_get():
 async def location_post():
     # logging.debug("POST /location")
     data = await request.get_json()
-    # logging.debug(f"POST /location -> data {json.dumps(data)}")
+    logging.debug(f"POST /location -> data {json.dumps(data)}")
     sensors_signal = adjust_data(data["sensors"])
     location_x, location_y = triangulate(sensors_signal)
     if location_x is not None and location_y is not None:
