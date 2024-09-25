@@ -4,7 +4,7 @@ import logging
 import asyncio
 import json
 
-logging.basicConfig(level="WARNING")
+logging.basicConfig(level="DEBUG")
 
 app = Quart(__name__)
 app = cors(app, allow_origin="*")
