@@ -13,7 +13,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  FlutterBluePlus.setLogLevel(LogLevel.verbose, color:false);
+  // FlutterBluePlus.setLogLevel(LogLevel.verbose, color: false);
   runApp(MyApp());
   FlutterBluePlus.turnOn();
   BluetoothService().startScan();
@@ -199,28 +199,34 @@ class BluetoothService {
   // List<BluetoothDevice> devicesList = [];
 
   void startScan() async {
+    print('startScan');
     var subscription = FlutterBluePlus.onScanResults.listen((results) {
-      print('scanning subscription call');
-        if (results.isNotEmpty) {
-            ScanResult r = results.last; // the most recently found device
-            print('${r.device.remoteId}: "${r.advertisementData.advName}" found!');
+          print('startScan -> scanning subscription call');
+          for (ScanResult r in results) {
+            print('startScan: ${r.device.remoteId}: "${r.advertisementData.advName}" found!');
           }
         },
         onError: (e) => print(e),
     );
 
     // cleanup: cancel subscription when scanning stops
-    FlutterBluePlus.cancelWhenScanComplete(subscription);
+    // FlutterBluePlus.cancelWhenScanComplete(subscription);
 
     // Wait for Bluetooth enabled & permission granted
     // In your real app you should use `FlutterBluePlus.adapterState.listen` to handle all states
     await FlutterBluePlus.adapterState.where((val) => val == BluetoothAdapterState.on).first;
 
+
+    print('startScan -> adapter ready');
+
     // Start scanning w/ timeout
     // Optional: use `stopScan()` as an alternative to timeout
     FlutterBluePlus.startScan(
-      // withNames:["MARADEUR"], // *or* any of the specified names
+        androidUsesFineLocation:true,
+      withNames:["MARADEUR1", "MARADEUR2", "MARADEUR3"], // *or* any of the specified names
   );
+
+    print('startScan -> scanning...');
 
     // FlutterBluePlus.startScan(timeout: Duration(seconds: 1));
 
