@@ -200,7 +200,7 @@ def triangulate(signals):
     res_y1 = y1 * coef1 + y2 * coef2
     logging.debug(f"ZHOPA {coef1}, {coef2}")
 
-    coef1 = dist3 / (dist2 + dist2)
+    coef1 = dist3 / (dist2 + dist3)
     coef2 = dist2 / (dist2 + dist3)
     res_x2 = x2 * coef1 + x3 * coef2
     res_y2 = y2 * coef1 + y3 * coef2
