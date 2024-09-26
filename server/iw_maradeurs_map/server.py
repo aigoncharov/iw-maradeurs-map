@@ -3,6 +3,18 @@ from quart_cors import cors
 import logging
 import asyncio
 import json
+from logging.config import dictConfig
+
+dictConfig(
+    {
+        "version": 1,
+        "loggers": {
+            "quart.app": {
+                "level": "ERROR",
+            },
+        },
+    }
+)
 
 logging.basicConfig(level="DEBUG")
 
@@ -43,7 +55,7 @@ sensors = {
 
 running_task = None
 cnt = 0
-eps = 0.000000001
+eps = 0.00001
 
 
 @app.before_serving
@@ -127,7 +139,7 @@ def get_distance(signal):
 
 
 def triangulate(signals):
-    if len(signals) < 2:
+    if len(signals) < 3:
         return None, None
 
     signals.sort(key=lambda x: -x["signal"])
