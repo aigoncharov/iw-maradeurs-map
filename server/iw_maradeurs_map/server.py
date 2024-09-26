@@ -144,10 +144,10 @@ def update_location(x, y):
         x_max = max(x_max, sensors[beacon]['x'])
         y_min = min(y_min, sensors[beacon]['y'])
         y_max = max(y_max, sensors[beacon]['y'])
-    x_min -= 0.00002
-    x_min += 0.00002
-    y_min -= 0.00003
-    y_max += 0.00003
+    # x_min -= 0.00002
+    # x_min += 0.00002
+    # y_min -= 0.00003
+    # y_max += 0.00003
     
     new_x = (x - x_min) / (x_max - x_min)
     new_y = (y - y_min) / (y_max - y_min)
