@@ -21,7 +21,8 @@ logging.basicConfig(level="DEBUG")
 app = Quart(__name__)
 app = cors(app, allow_origin="*")
 
-users = {"42": {"id": "42", "position": {"x": 37.35960, "y": 55.69850}}}
+# users = {"42": {"id": "42", "position": {"x": 37.35960, "y": 55.69850}}}
+users = {"42": {"id": "42", "position": {"x": 0.5, "y": 0.5}}}
 
 sensors = {
     "MARADEUR1": {
@@ -120,12 +121,34 @@ async def location_post():
             logging.warning(f"FOUND NEW POSITION x {str(location_x)}")
             logging.warning(f"FOUND NEW POSITION y {str(location_y)}")
 
-        users["42"]["position"] = {
-            "x": location_x,
-            "y": location_y,
-        }
+        # users["42"]["position"] = {
+        #     "x": location_x,
+        #     "y": location_y,
+        # }
+        update_location(location_x, location_y)
     return "", 204
 
+def update_location(x, y):
+    x_min = None
+    x_max = None
+    y_min = None
+    y_max = None
+    for beacon in sensors:
+        x_min = min(x_min, sensors[beacon]['x'])
+        x_max = max(x_max, sensors[beacon]['x'])
+        y_min = min(y_min, sensors[beacon]['y'])
+        y_max = max(y_max, sensors[beacon]['y'])
+    x_min -= 0.00002
+    x_min += 0.00002
+    y_min -= 0.00003
+    y_max += 0.00003
+    
+    new_x = (x - x_min) / (x_max - x_min)
+    new_y = (y - y_min) / (y_max - y_min)
+    users["42"]["position"] = {
+        "x": new_x,
+        "y": new_y,
+    }
 
 def adjust_data(signals):
     for i in range(len(signals)):
