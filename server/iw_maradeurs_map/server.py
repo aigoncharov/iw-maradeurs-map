@@ -134,6 +134,12 @@ def update_location(x, y):
     y_min = None
     y_max = None
     for beacon in sensors:
+        if x_min is None:
+            x_min = sensors[beacon]['x']
+            x_max = sensors[beacon]['x']
+            y_min = sensors[beacon]['y']
+            y_max = sensors[beacon]['y']
+            continue
         x_min = min(x_min, sensors[beacon]['x'])
         x_max = max(x_max, sensors[beacon]['x'])
         y_min = min(y_min, sensors[beacon]['y'])
