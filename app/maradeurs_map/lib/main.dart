@@ -11,6 +11,7 @@ import 'dart:math';
 import 'dart:developer';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:uuid/uuid.dart';
 
 import 'package:flutter/material.dart';
 
@@ -159,7 +160,7 @@ class _RedDotAnimationState extends State<RedDotAnimation>
         child: Stack(
           children: [
             SvgPicture.asset(
-              'assets/Бантик.svg', // Replace with your SVG asset path
+              'assets/China.svg', // Replace with your SVG asset path
               width: 300,
               height: 500,
               fit: BoxFit.cover,
@@ -200,6 +201,7 @@ class _RedDotAnimationState extends State<RedDotAnimation>
 class BluetoothRssiReader {
   List<BluetoothDevice> devices = [];
   Timer? _timer;
+  final String uuid = Uuid().v4();
 
   BluetoothRssiReader(this.devices);
 
@@ -252,7 +254,7 @@ class BluetoothRssiReader {
         'Content-Type': 'application/json',
         // Add any additional headers here
       },
-      body: jsonEncode({'sensors': sensors}),
+      body: jsonEncode({'sensors': sensors, 'user': uuid}),
     );
 
     if (response.statusCode == 204) {
