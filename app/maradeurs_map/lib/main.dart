@@ -34,7 +34,16 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  bool showAdditionalWindow = false;
+  List<bool> initialCheckboxes = [false, false, false];
+  List<bool> additionalCheckboxes = [false, false, false];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,29 +51,90 @@ class HomePage extends StatelessWidget {
         title: Text('Home Page'),
       ),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => RedDotAnimation()),
-            );
-          },
-          child: Text('Go to Red Dot Page'),
-        ),
+        child: showAdditionalWindow
+            ? _buildAdditionalWindow()
+            : _buildInitialWindow(),
       ),
     );
   }
-}
 
-class SecondPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home Page'),
-      ),
-      body: Center(
-        child: ElevatedButton(
+  Widget _buildInitialWindow() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text('Some text yadda yadda yadda'),
+        CheckboxListTile(
+          title: Text('Checkbox 1'),
+          value: initialCheckboxes[0],
+          onChanged: (bool? value) {
+            setState(() {
+              initialCheckboxes[0] = value!;
+            });
+          },
+        ),
+        CheckboxListTile(
+          title: Text('Checkbox 2'),
+          value: initialCheckboxes[1],
+          onChanged: (bool? value) {
+            setState(() {
+              initialCheckboxes[1] = value!;
+            });
+          },
+        ),
+        CheckboxListTile(
+          title: Text('Checkbox 3'),
+          value: initialCheckboxes[2],
+          onChanged: (bool? value) {
+            setState(() {
+              initialCheckboxes[2] = value!;
+            });
+          },
+        ),
+        ElevatedButton(
+          onPressed: () {
+            setState(() {
+              showAdditionalWindow = true;
+            });
+          },
+          child: Text('Show More'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAdditionalWindow() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text('Additional text here'),
+        CheckboxListTile(
+          title: Text('Additional Checkbox 1'),
+          value: additionalCheckboxes[0],
+          onChanged: (bool? value) {
+            setState(() {
+              additionalCheckboxes[0] = value!;
+            });
+          },
+        ),
+        CheckboxListTile(
+          title: Text('Additional Checkbox 2'),
+          value: additionalCheckboxes[1],
+          onChanged: (bool? value) {
+            setState(() {
+              additionalCheckboxes[1] = value!;
+            });
+          },
+        ),
+        CheckboxListTile(
+          title: Text('Additional Checkbox 3'),
+          value: additionalCheckboxes[2],
+          onChanged: (bool? value) {
+            setState(() {
+              additionalCheckboxes[2] = value!;
+            });
+          },
+        ),
+        ElevatedButton(
           onPressed: () {
             Navigator.push(
               context,
@@ -73,7 +143,7 @@ class SecondPage extends StatelessWidget {
           },
           child: Text('Go to Red Dot Page'),
         ),
-      ),
+      ],
     );
   }
 }
@@ -122,9 +192,9 @@ class _RedDotAnimationState extends State<RedDotAnimation>
           // print('${(user['position']['x'] * 100000).round() % 10 * 3 + 100}');
           setState(() {
             _endPoint = Offset(
-                ((user['position']['x'] * 100000).round() % 10 * 12 + 70)
+                ((user['position']['x'].round() * 300)
                     .toDouble(),
-                ((user['position']['y'] * 100000).round() % 10 * 20 + 250)
+                ((user['position']['y'].round() * 500)
                     .toDouble());
             // (user['position']['x'] - 37) * 100, // 1 meter = 10
 
@@ -181,15 +251,6 @@ class _RedDotAnimationState extends State<RedDotAnimation>
                 );
               },
             ),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(builder: (context) => RedDotAnimation()),
-            //     );
-            //   },
-            //   child: Text('Go to Red Dot Page'),
-            // )
           ],
         ),
       ),
@@ -234,10 +295,7 @@ class BluetoothRssiReader {
         int rssi = await device.readRssi();
         print('RSSI ${device.advName}: $rssi dBm');
 
-        Map<String, dynamic> data = {
-          'id': device.advName,
-          'signal': rssi
-        };
+        Map<String, dynamic> data = {'id': device.advName, 'signal': rssi};
 
         sensors.add(data);
       } catch (e) {
@@ -272,18 +330,19 @@ class BluetoothService {
 
   void startScan() async {
     print('startScan');
-    var subscription = FlutterBluePlus.onScanResults.listen((results) async {
-          print('startScan -> scanning subscription call');
-          List<BluetoothDevice> devices = [];
-          for (ScanResult r in results) {
-            var device = r.device;
-            devices.add(device);
-            print('startScan: "${device.advName}" found');
-          }
-          var rssiReader = BluetoothRssiReader(devices);
-          rssiReader.startReadingRssi();
-        },
-        onError: (e) => print(e),
+    var subscription = FlutterBluePlus.onScanResults.listen(
+      (results) async {
+        print('startScan -> scanning subscription call');
+        List<BluetoothDevice> devices = [];
+        for (ScanResult r in results) {
+          var device = r.device;
+          devices.add(device);
+          print('startScan: "${device.advName}" found');
+        }
+        var rssiReader = BluetoothRssiReader(devices);
+        rssiReader.startReadingRssi();
+      },
+      onError: (e) => print(e),
     );
 
     // cleanup: cancel subscription when scanning stops
@@ -291,18 +350,22 @@ class BluetoothService {
 
     // Wait for Bluetooth enabled & permission granted
     // In your real app you should use `FlutterBluePlus.adapterState.listen` to handle all states
-    await FlutterBluePlus.adapterState.where((val) => val == BluetoothAdapterState.on).first;
-
+    await FlutterBluePlus.adapterState
+        .where((val) => val == BluetoothAdapterState.on)
+        .first;
 
     print('startScan -> adapter ready');
 
     // Start scanning w/ timeout
     // Optional: use `stopScan()` as an alternative to timeout
     FlutterBluePlus.startScan(
-        androidUsesFineLocation:true,
-      withNames:["MARADEUR1", "MARADEUR2", "MARADEUR3"], // *or* any of the specified names
-        timeout: Duration(seconds: 5)
-  );
+        androidUsesFineLocation: true,
+        withNames: [
+          "MARADEUR1",
+          "MARADEUR2",
+          "MARADEUR3"
+        ], // *or* any of the specified names
+        timeout: Duration(seconds: 5));
 
     print('startScan -> scanning...');
 
