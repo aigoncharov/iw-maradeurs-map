@@ -177,11 +177,11 @@ def triangulate(signals):
 
     x1 = signals[0]["x"]
     y1 = signals[0]["y"]
-    dist1 = get_distance(signals[0]["signal"]) ** 2
+    dist1 = get_distance(signals[0]["signal"]) ** 3
 
     x2 = signals[1]["x"]
     y2 = signals[1]["y"]
-    dist2 = get_distance(signals[1]["signal"]) ** 2
+    dist2 = get_distance(signals[1]["signal"]) ** 3
 
     if len(signals) == 2:
         coef1 = dist2 / (dist1 + dist2)
@@ -192,7 +192,7 @@ def triangulate(signals):
 
     x3 = signals[2]["x"]
     y3 = signals[2]["y"]
-    dist3 = get_distance(signals[2]["signal"]) ** 2
+    dist3 = get_distance(signals[2]["signal"]) ** 3
 
     coef1 = dist2 / (dist1 + dist2)
     coef2 = dist1 / (dist1 + dist2)
