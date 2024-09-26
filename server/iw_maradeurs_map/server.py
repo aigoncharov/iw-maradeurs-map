@@ -140,7 +140,7 @@ def get_distance(signal):
 
 
 def triangulate(signals):
-    if len(signals) < 3:
+    if len(signals) < 2:
         return None, None
 
     signals.sort(key=lambda x: -x["signal"])
