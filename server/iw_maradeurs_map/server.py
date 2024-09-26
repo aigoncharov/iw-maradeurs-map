@@ -114,12 +114,12 @@ async def location_post():
     sensors_signal = adjust_data(data["sensors"])
     location_x, location_y = triangulate(sensors_signal)
     if location_x is not None and location_y is not None:
-        if (
-            abs(location_x - users["42"]["position"]["x"]) > eps
-            or abs(location_y - users["42"]["position"]["y"]) > eps
-        ):
-            logging.warning(f"FOUND NEW POSITION x {str(location_x)}")
-            logging.warning(f"FOUND NEW POSITION y {str(location_y)}")
+        # if (
+        #     abs(location_x - users["42"]["position"]["x"]) > eps
+        #     or abs(location_y - users["42"]["position"]["y"]) > eps
+        # ):
+        #     logging.warning(f"FOUND NEW POSITION x {str(location_x)}")
+        #     logging.warning(f"FOUND NEW POSITION y {str(location_y)}")
 
         # users["42"]["position"] = {
         #     "x": location_x,
@@ -177,11 +177,11 @@ def triangulate(signals):
 
     x1 = signals[0]["x"]
     y1 = signals[0]["y"]
-    dist1 = get_distance(signals[0]["signal"])
+    dist1 = get_distance(signals[0]["signal"]) ** 2
 
     x2 = signals[1]["x"]
     y2 = signals[1]["y"]
-    dist2 = get_distance(signals[1]["signal"])
+    dist2 = get_distance(signals[1]["signal"]) ** 2
 
     if len(signals) == 2:
         coef1 = dist2 / (dist1 + dist2)
@@ -192,28 +192,28 @@ def triangulate(signals):
 
     x3 = signals[2]["x"]
     y3 = signals[2]["y"]
-    dist3 = get_distance(signals[2]["signal"])
+    dist3 = get_distance(signals[2]["signal"]) ** 2
 
     coef1 = dist2 / (dist1 + dist2)
     coef2 = dist1 / (dist1 + dist2)
     res_x1 = x1 * coef1 + x2 * coef2
     res_y1 = y1 * coef1 + y2 * coef2
-    logging.debug(f"ZHOPA {coef1}, {coef2}")
+    # logging.debug(f"ZHOPA {coef1}, {coef2}")
 
     coef1 = dist3 / (dist2 + dist3)
     coef2 = dist2 / (dist2 + dist3)
     res_x2 = x2 * coef1 + x3 * coef2
     res_y2 = y2 * coef1 + y3 * coef2
-    logging.debug(f"ZHOPA {coef1}, {coef2}")
+    # logging.debug(f"ZHOPA {coef1}, {coef2}")
 
     coef1 = dist3 / (dist1 + dist3)
     coef2 = dist1 / (dist1 + dist3)
     res_x3 = x1 * coef1 + x3 * coef2
     res_y3 = y1 * coef1 + y3 * coef2
-    logging.debug(f"ZHOPA {coef1}, {coef2}")
+    # logging.debug(f"ZHOPA {coef1}, {coef2}")
 
     res_x = (res_x1 + res_x2 + res_x3) / 3
     res_y = (res_y1 + res_y2 + res_y3) / 3
-    logging.debug(f"FINAL X {res_x1}, {res_x2}, {res_x3}, {res_x}")
-    logging.debug(f"FINAL Y {res_y1}, {res_y2}, {res_y3}, {res_y}")
+    # logging.debug(f"FINAL X {res_x1}, {res_x2}, {res_x3}, {res_x}")
+    # logging.debug(f"FINAL Y {res_y1}, {res_y2}, {res_y3}, {res_y}")
     return res_x, res_y
