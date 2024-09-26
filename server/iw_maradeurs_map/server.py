@@ -165,7 +165,7 @@ def adjust_data(signals):
 
 
 def get_distance(signal):
-    return signal + 127 + 100
+    return signal + 128
 
 
 def triangulate(signals):
@@ -186,8 +186,6 @@ def triangulate(signals):
     if len(signals) == 2:
         coef1 = dist2 / (dist1 + dist2)
         coef2 = dist1 / (dist1 + dist2)
-        # coef1 = dist2 / (dist1 + dist2) / (((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) ** 0.5)
-        # coef2 = dist1 / (dist1 + dist2) / (((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) ** 0.5)
         res_x1 = x1 * coef1 + x2 * coef2
         res_y1 = y1 * coef1 + y2 * coef2
         return res_x1, res_y1
@@ -198,25 +196,24 @@ def triangulate(signals):
 
     coef1 = dist2 / (dist1 + dist2)
     coef2 = dist1 / (dist1 + dist2)
-    # coef1 = dist2 / (dist1 + dist2) / (((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) ** 0.5)
-    # coef2 = dist1 / (dist1 + dist2) / (((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) ** 0.5)
     res_x1 = x1 * coef1 + x2 * coef2
     res_y1 = y1 * coef1 + y2 * coef2
+    logging.debug(f"ZHOPA {coef1}, {coef2}")
 
     coef1 = dist3 / (dist2 + dist2)
     coef2 = dist2 / (dist2 + dist3)
-    # coef1 = dist3 / (dist2 + dist3) / (((x2 - x3) * (x2 - x3) + (y2 - y3) * (y2 - y3)) ** 0.5)
-    # coef2 = dist2 / (dist2 + dist3) / (((x2 - x3) * (x2 - x3) + (y2 - y3) * (y2 - y3)) ** 0.5)
     res_x2 = x2 * coef1 + x3 * coef2
     res_y2 = y2 * coef1 + y3 * coef2
+    logging.debug(f"ZHOPA {coef1}, {coef2}")
 
     coef1 = dist3 / (dist1 + dist3)
     coef2 = dist1 / (dist1 + dist3)
-    # coef1 = dist3 / (dist1 + dist3) / (((x1 - x3) * (x1 - x3) + (y1 - y3) * (y1 - y3)) ** 0.5)
-    # coef2 = dist1 / (dist1 + dist3) / (((x1 - x3) * (x1 - x3) + (y1 - y3) * (y1 - y3)) ** 0.5)
     res_x3 = x1 * coef1 + x3 * coef2
     res_y3 = y1 * coef1 + y3 * coef2
+    logging.debug(f"ZHOPA {coef1}, {coef2}")
 
     res_x = (res_x1 + res_x2 + res_x3) / 3
     res_y = (res_y1 + res_y2 + res_y3) / 3
+    logging.debug(f"FINAL X {res_x1}, {res_x2}, {res_x3}, {res_x}")
+    logging.debug(f"FINAL Y {res_y1}, {res_y2}, {res_y3}, {res_y}")
     return res_x, res_y
