@@ -121,12 +121,16 @@ class _RedDotAnimationState extends State<RedDotAnimation>
           // print('${user['position']['x'].runtimeType}');
           // print('${(user['position']['x'] * 100000).round().runtimeType}');
           // print('${(user['position']['x'] * 100000).round() % 10 * 3 + 100}');
+          // setState(() {
+          //   _endPoint = Offset(
+          //       ((user['position']['x'] * 100000).round() % 10 * 12 + 70)
+          //           .toDouble(),
+          //       ((user['position']['y'] * 100000).round() % 10 * 20 + 250)
+          //           .toDouble());
           setState(() {
             _endPoint = Offset(
-                ((user['position']['x'] * 100000).round() % 10 * 12 + 70)
-                    .toDouble(),
-                ((user['position']['y'] * 100000).round() % 10 * 20 + 250)
-                    .toDouble());
+                ((user['position']['x'].round() * 300).toDouble()),
+                ((user['position']['y'].round() * 500).toDouble()));
             // (user['position']['x'] - 37) * 100, // 1 meter = 10
 
             // (user['position']['y'] - 55) * 100); // 1 meter = 10
