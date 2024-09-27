@@ -129,8 +129,8 @@ class _RedDotAnimationState extends State<RedDotAnimation>
           //           .toDouble());
           setState(() {
             _endPoint = Offset(
-                ((user['position']['x'].round() * 300).toDouble()),
-                ((user['position']['y'].round() * 500).toDouble()));
+                ((user['position']['x'] * 300).toDouble()),
+                ((user['position']['y'] * 500).toDouble()));
             // (user['position']['x'] - 37) * 100, // 1 meter = 10
 
             // (user['position']['y'] - 55) * 100); // 1 meter = 10
